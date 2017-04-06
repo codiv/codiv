@@ -45,9 +45,6 @@
 				let menuWrapper = new BScroll(this.$refs.menuWarpper,{
 					probeType: 3
 				})
-				menuWrapper.on('scroll', (pos) => {
-					console.log(pos.x + '~' + posx.y)
-				})
 			}
 		}
 	}
