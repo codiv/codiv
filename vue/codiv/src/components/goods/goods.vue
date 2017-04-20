@@ -2,7 +2,8 @@
 	<div id="goods">
 		<div class="menu-wrapper" ref="menuWrapper">
 			<ul>
-				<li v-for="item in goods" class="menu-item">
+				<li v-for="(item, index) in goods" class="menu-item" :class="{current:scrolIndex===index}"
+					@click="onMenu(index,$event)">
 					<span class="text border-1px">
 						<em class="icon" v-if="item.type>0" :class="classMain[item.type]"></em>{{item.name}}
 					</span>
@@ -11,7 +12,7 @@
 		</div>
 		<div class="food-wrapper" ref="foodWrapper">
 			<ul>
-				<li class="food-list" v-for="food in goods">
+				<li class="food-list" v-for="food in goods" ref="foodList">
 					<h1 class="title">{{food.name}}</h1>
 					<ul>
 						<li class="food-item border-1px" v-for="foods in food.foods">
@@ -45,35 +46,68 @@
 	import BScroll from 'better-scroll'
 	import shopcart from 'components/shopcart/shopcart'
 	import cartcontrol from 'components/cartcontrol/cartcontrol'
-	let ERR_OK = 0
+	let ERR_OK = 0;
 	export default{
 		data () {
 			return {
-				goods: {
-					type: Object
-				},
-				classMain: {
-					type: Array
-				}
+				goods: {},
+				classMain: [],
+				listHeihgt: [],
+				scrollY: 0
 			}
 		},
 		created () {
-			this.classMain = ['decrease', 'discount', 'special', 'invoice', 'guarantee'],
-
-					this.$http.get('api/goods', {name: "abc"}).then((response) => {
-						let res = response.body
-						if (res.errno === ERR_OK) {
-							this.goods = res.data
-							this.$nextTick(() => {
-								this._menuScroll()
-							})
-						}
+			this.classMain = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
+			this.$http.get('api/goods', {name: "abc"}).then((response) => {
+				let res = response.body;
+				if (res.errno === ERR_OK) {
+					this.goods = res.data;
+					this.$nextTick(() => {
+						this._menuScroll();
+						this.foodListNum()
 					})
+				}
+			})
 		},
 		methods: {
 			_menuScroll () {
-				this.menuWrapper = new BScroll(this.$refs.menuWrapper, {})
-				this.foodWrapper = new BScroll(this.$refs.foodWrapper, {})
+				this.menuWrapper = new BScroll(this.$refs.menuWrapper, {
+					click: true
+				});
+				this.foodWrapper = new BScroll(this.$refs.foodWrapper, {
+					probeType: 3
+				});
+				this.foodWrapper.on('scroll', (pos) => {
+					this.scrollY = Math.abs(Math.floor(pos.y))
+				})
+			},
+			onMenu (index, event) {
+				let foodList = this.$refs.foodList;
+				if (!event._constructed) {
+					return
+				}
+				this.foodWrapper.scrollToElement(foodList[index], 300)
+			},
+			foodListNum () {
+				let foodList = this.$refs.foodList;
+				let height = 0;
+				this.listHeihgt.push(height);
+				for (let i = 0; i < foodList.length; i++) {
+					height += foodList[i].clientHeight;
+					this.listHeihgt.push(height)
+				}
+			}
+		},
+		computed: {
+			scrolIndex () {
+				for (let i = 0; i < this.listHeihgt.length; i++) {
+					let height1 = this.listHeihgt[i];
+					let height2 = this.listHeihgt[i + 1];
+					if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
+						return i;
+					}
+				}
+				return 0;
 			}
 		},
 		components: {
@@ -104,6 +138,14 @@
 				padding: 0 12px
 				line-height: 14px
 				font-size: 0
+				&.current
+					position: relative
+					z-index: 10
+					margin-top: -1px
+					background: #fff
+					font-weight: 700
+					.text
+						border-none()
 				.text
 					display: table-cell
 					width: 56px
