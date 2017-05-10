@@ -14,7 +14,7 @@
 				</li>
 			</ul>
 		</div>
-		<router-view></router-view>
+		<router-view :seller="seller"></router-view>
 	</div>
 
 </template>
@@ -31,7 +31,7 @@
 			}
 		},
 		created () {
-			this.$http.get('http://localhost:8080/api/seller', {name:"abc"}).then(response => {
+			this.$http.get('api/seller', {name:"abc"}).then(response => {
 				const res = response.body
 				if (res.errno === ERR_OK) {
 					this.seller = res.data

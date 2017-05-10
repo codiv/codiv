@@ -1,13 +1,41 @@
 <template>
 	<div class="cartcontrol">
-		<div class="cart-desc icon-remove_circle_outline"></div>
-		<div class="count">11</div>
-		<div class="cart-add icon-add_circle"></div>
+		<div class="cart-desc icon-remove_circle_outline" v-show="food.count>0" @click="descCart"></div>
+		<div class="count" v-show="food.count>0">{{food.count}}</div>
+		<div class="cart-add icon-add_circle" @click="addCart"></div>
 	</div>
 </template>
 
+<!--suppress JSUnresolvedFunction, JSUnresolvedVariable -->
 <script type="text/ecmascript-6">
-	export default {}
+	import Vue from 'vue'
+	export default {
+		props: {
+			food: {
+				type: Object
+			}
+		},
+		methods: {
+			addCart (event) {
+				if (!event._constructed) {
+					return;
+				}
+				if (!this.food.count) {
+					Vue.set(this.food, 'count', 1);
+				} else {
+					this.food.count++;
+				}
+			},
+			descCart (event) {
+				if (!event._constructed) {
+					return;
+				}
+				if (this.food.count) {
+					this.food.count--;
+				}
+			}
+		}
+	}
 
 </script>
 

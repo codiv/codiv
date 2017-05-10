@@ -12,23 +12,23 @@
 		</div>
 		<div class="food-wrapper" ref="foodWrapper">
 			<ul>
-				<li class="food-list" v-for="food in goods" ref="foodList">
-					<h1 class="title">{{food.name}}</h1>
+				<li class="food-list" v-for="item in goods" ref="foodList">
+					<h1 class="title">{{item.name}}</h1>
 					<ul>
-						<li class="food-item border-1px" v-for="foods in food.foods">
-							<div class="icon" v-if="foods.icon"><img :src="foods.icon" width="57" height="57"></div>
+						<li class="food-item border-1px" v-for="food in item.foods">
+							<div class="icon" v-if="food.icon"><img :src="food.icon" width="57" height="57"></div>
 							<div class="content">
-								<h2 class="name">{{foods.name}}</h2>
-								<p class="desc">{{foods.description}}</p>
+								<h2 class="name">{{food.name}}</h2>
+								<p class="desc">{{food.description}}</p>
 								<div class="extra">
-									<span class="count">月售{{foods.sellCount}}份</span><span>好评率{{foods.rating}}%</span>
+									<span class="count">月售{{food.sellCount}}份</span><span>好评率{{food.rating}}%</span>
 								</div>
 								<div class="price">
-									<span class="now">￥{{foods.price}}</span>
-									<span class="old" v-show="foods.oldPrice">￥{{foods.oldPrice}}</span>
+									<span class="now">￥{{food.price}}</span>
+									<span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
 								</div>
 								<div class="cartcontrol-wrapper">
-									<cartcontrol></cartcontrol>
+									<cartcontrol :food="food"></cartcontrol>
 								</div>
 							</div>
 						</li>
@@ -36,7 +36,7 @@
 				</li>
 			</ul>
 		</div>
-		<shopcart></shopcart>
+		<shopcart :minPrice="seller.minPrice" :deliveryPrice="seller.deliveryPrice"></shopcart>
 	</div>
 
 </template>
@@ -46,7 +46,9 @@
 	import BScroll from 'better-scroll'
 	import shopcart from 'components/shopcart/shopcart'
 	import cartcontrol from 'components/cartcontrol/cartcontrol'
+
 	let ERR_OK = 0;
+
 	export default{
 		data () {
 			return {
@@ -54,6 +56,11 @@
 				classMain: [],
 				listHeihgt: [],
 				scrollY: 0
+			}
+		},
+		props: {
+			seller: {
+				type: Object
 			}
 		},
 		created () {
@@ -75,7 +82,8 @@
 					click: true
 				});
 				this.foodWrapper = new BScroll(this.$refs.foodWrapper, {
-					probeType: 3
+					probeType: 3,
+					click: true
 				});
 				this.foodWrapper.on('scroll', (pos) => {
 					this.scrollY = Math.abs(Math.floor(pos.y))
