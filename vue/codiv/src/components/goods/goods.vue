@@ -36,7 +36,8 @@
 				</li>
 			</ul>
 		</div>
-		<shopcart :minPrice="seller.minPrice" :deliveryPrice="seller.deliveryPrice"></shopcart>
+		<shopcart :selectFoods="selectFoods" :minPrice="seller.minPrice"
+				  :deliveryPrice="seller.deliveryPrice"></shopcart>
 	</div>
 
 </template>
@@ -55,7 +56,8 @@
 				goods: {},
 				classMain: [],
 				listHeihgt: [],
-				scrollY: 0
+				scrollY: 0,
+				selectFoods: []
 			}
 		},
 		props: {
@@ -116,6 +118,18 @@
 					}
 				}
 				return 0;
+			},
+			selectFoods () {
+				let foods = [];
+				this.goods.forEach((good) => {
+					good.foods.forEach((food) => {
+						if (food.count) {
+							foods.push(food);
+						}
+						;
+					});
+				});
+				return foods;
 			}
 		},
 		components: {
