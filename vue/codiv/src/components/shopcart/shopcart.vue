@@ -25,7 +25,12 @@
 			selectFoods: {
 				type: Array,
 				default () {
-					return []
+					return [
+						{
+							price: 10,
+							count: 1
+						}
+					]
 				}
 			},
 			minPrice: {

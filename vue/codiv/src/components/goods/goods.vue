@@ -53,11 +53,10 @@
 	export default{
 		data () {
 			return {
-				goods: {},
+				goods: [],
 				classMain: [],
 				listHeihgt: [],
-				scrollY: 0,
-				selectFoods: []
+				scrollY: 0
 			}
 		},
 		props: {
@@ -126,7 +125,6 @@
 						if (food.count) {
 							foods.push(food);
 						}
-						;
 					});
 				});
 				return foods;
