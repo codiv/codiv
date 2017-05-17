@@ -30,6 +30,7 @@
 				} else {
 					this.food.count++;
 				}
+				this.$emit('add', event.target);
 			},
 			descCart (event) {
 				if (!event._constructed) {
@@ -64,7 +65,7 @@
 				opacity: 0
 				transform: translate3d(24px, 0, 0)
 				.inner
-					transform:rotate(180deg)
+					transform: rotate(180deg)
 			&.move-enter-active, &.move-leave-active
 				transition: all 0.4s linear
 		.count

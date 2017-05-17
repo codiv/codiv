@@ -13,33 +13,34 @@ Vue.use(VueRedource)
 
 /* eslint-disable no-new */
 const routes = [
-  {
-    path: '/',
-    component: goods
-  },
-  {
-    path: '/seller',
-    component: seller
-  },
-  {
-    path: '/goods',
-    component: goods
-  },
-  {
-    path: '/ratings',
-    component: ratings
-  }
+    {
+        path: '/',
+        component: goods
+    },
+    {
+        path: '/seller',
+        component: seller
+    },
+    {
+        path: '/goods',
+        component: goods
+    },
+    {
+        path: '/ratings',
+        component: ratings
+    }
 ]
 
 const router = new VueRouter({
-  'linkActiveClass': 'active',
-  routes
+    'linkActiveClass': 'active',
+    mode: 'history',
+    routes
 })
 
 new Vue({
-  el: '#app',
-  router,
-   render:function(h){
-    return h(App)
-   } //简写成： render: h => h(App)
+    el: '#app',
+    router,
+    render: function (h) {
+        return h(App)
+    } //简写成： render: h => h(App)
 })

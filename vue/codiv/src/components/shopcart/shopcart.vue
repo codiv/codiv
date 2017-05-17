@@ -15,22 +15,48 @@
 				<div class="pay" :class="payClass">{{payDecs}}</div>
 			</div>
 		</div>
+		<div class="ball-contener">
+			<div v-for="ball in balls">
+				<transition name="drop" @before-enter="dropBefore" @enter="dropping" @after-enter="droped">
+					<div class="ball" v-show="ball.show">
+						<div class="inner inner-hook"></div>
+					</div>
+				</transition>
+			</div>
+		</div>
 	</div>
 </template>
 
 <!--suppress JSUnresolvedVariable -->
 <script type="text/ecmascript-6">
 	export default {
+		data () {
+			return {
+				balls: [
+					{
+						show: false
+					},
+					{
+						show: false
+					},
+					{
+						show: false
+					},
+					{
+						show: false
+					},
+					{
+						show: false
+					}
+				],
+				dropBalls: []
+			}
+		},
 		props: {
 			selectFoods: {
 				type: Array,
 				default () {
-					return [
-						{
-							price: 10,
-							count: 1
-						}
-					]
+					return []
 				}
 			},
 			minPrice: {
@@ -76,6 +102,55 @@
 					return 'not-enough'
 				} else {
 					return 'enough'
+				}
+			}
+		},
+		methods: {
+			drop (el) {
+				for (let i = 0; i < this.balls.length; i++) {
+					let ball = this.balls[i];
+					if (!ball.show) {
+						ball.show = true;
+						ball.el = el;
+						this.dropBalls.push(ball);
+						return;
+					}
+				}
+			},
+			dropBefore (el) {
+				let count = this.balls.length;
+				while (count--) {
+					let ball = this.balls[count];
+					if (ball.show) {
+						let ref = ball.el.getBoundingClientRect();
+						let x = ref.left - 32;
+						let y = -(window.innerHeight - ref.top - 20);
+						el.style.display = '';
+						el.style.webkitTransform = `translate3d(0,${y}px,0)`;
+						el.style.transform = `translate3d(0,${y}px,0)`;
+						let inner = el.getElementsByClassName('inner-hook')[0];
+						inner.style.webkitTransform = `translate3d(${x}px,0,0)`;
+						inner.style.transform = `translate3d(${x}px,0,0)`;
+					}
+				}
+			},
+			dropping (el, done) {
+				/* eslint-disable no-unused-vars */
+				let rf = el.offsetHeight;
+				this.$nextTick(() => {
+					el.style.webkitTransform = 'translate3d(0,0,0)';
+					el.style.transform = 'translate3d(0,0,0)';
+					let inner = el.getElementsByClassName('inner-hook')[0];
+					inner.style.webkitTransform = 'translate3d(0,0,0)';
+					inner.style.transform = 'translate3d(0,0,0)';
+					el.addEventListener('transitionend', done);
+				});
+			},
+			droped (el) {
+				let ball = this.dropBalls.shift();
+				if (ball) {
+					ball.show = false;
+					el.style.display = 'none';
 				}
 			}
 		}
@@ -170,6 +245,18 @@
 					&.enough
 						background-color: #00b43c
 						color: #FFF
-
-
+		.ball-contener
+			.ball
+				position: fixed;
+				left: 32px;
+				bottom: 22px;
+				z-index: 200;
+				z-index: 200
+				transition: all 0.4s cubic-bezier(0.49, -0.29, 0.75, 0.41)
+				.inner
+					width: 16px;
+					height: 16px;
+					border-radius: 50%;
+					background: #00a0dc;
+					transition: all 0.4s linear
 </style>
