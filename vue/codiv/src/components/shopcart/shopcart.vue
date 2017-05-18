@@ -1,6 +1,6 @@
 <template>
 	<div class="shopcart">
-		<div class="content">
+		<div class="content" @click="toggleList">
 			<div class="content-left">
 				<div class="logo-wrapper">
 					<div class="logo" :class="{'highLight':totalCount>0}"><i class="icon-shopping_cart"></i></div>
@@ -24,11 +24,14 @@
 				</transition>
 			</div>
 		</div>
+		<foodscart :selectFoods="selectFoods" :fold="fold"></foodscart>
 	</div>
 </template>
 
 <!--suppress JSUnresolvedVariable -->
 <script type="text/ecmascript-6">
+	import foodscart from 'components/foodscart/foodscart'
+
 	export default {
 		data () {
 			return {
@@ -49,7 +52,8 @@
 						show: false
 					}
 				],
-				dropBalls: []
+				dropBalls: [],
+				fold: true
 			}
 		},
 		props: {
@@ -152,7 +156,17 @@
 					ball.show = false;
 					el.style.display = 'none';
 				}
+			},
+			toggleList () {
+				if (this.fold){
+					return
+				}
+				this.fold = false
+				console.log(this.fold)
 			}
+		},
+		components: {
+			foodscart
 		}
 	}
 </script>
