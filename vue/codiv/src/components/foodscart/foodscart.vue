@@ -1,21 +1,23 @@
 <template>
-	<div class="shopcart-list" v-show="listShow">
-		<div class="list-header">
-			<h1 class="title">购物车</h1>
-			<span class="empty">清空</span>
+	<transition name="fold">
+		<div class="shopcart-list" v-show="listShow">
+			<div class="list-header">
+				<h1 class="title">购物车</h1>
+				<span class="empty" @click="empty">清空</span>
+			</div>
+			<div class="list-content" ref="listContent">
+				<ul>
+					<li class="food border-1px" v-for="food in selectFoods">
+						<span class="name">{{food.name}}</span>
+						<div class="price">￥{{food.price*food.count}}</div>
+						<div class="cartcontrol-wrapper">
+							<cartcontrol :food="food" @add="addFood"></cartcontrol>
+						</div>
+					</li>
+				</ul>
+			</div>
 		</div>
-		<div class="list-content" ref="listContent">
-			<ul>
-				<li class="food border-1px" v-for="food in selectFoods">
-					<span class="name">{{food.name}}</span>
-					<div class="price">￥{{food.price*food.count}}</div>
-					<div class="cartcontrol-wrapper">
-						<cartcontrol :food="food" @add="addFood"></cartcontrol>
-					</div>
-				</li>
-			</ul>
-		</div>
-	</div>
+	</transition>
 </template>
 
 <script type="text/ecmascript-6">
@@ -38,9 +40,6 @@
 			}
 		},
 		created () {
-			this.$nextTick(() => {
-				this._listContent();
-			})
 		},
 		methods: {
 			addFood(target) {
@@ -51,8 +50,25 @@
 					click: true
 				})
 			},
+			empty () {
+				this.selectFoods.forEach((food) => {
+					food.count = 0;
+				})
+			}
+		},
+		computed: {
 			listShow () {
-				return this.fold;
+				let show = this.fold;
+				if (show) {
+					this.$nextTick(() => {
+						if (!this.listContent) {
+							this._listContent();
+						} else {
+							this.listContent.refresh();
+						}
+					})
+				}
+				return show;
 			}
 		},
 		components: {
@@ -69,6 +85,11 @@
 		left: 0
 		z-index: -1
 		width: 100%
+		transform: translate3d(0, -100%, 0)
+		&.fold-enter, &.fold-leave-active
+			transform: translate3d(0, 0, 0)
+		&.fold-enter-active, &.fold-leave-active
+			transition: all 0.5s
 		.list-header
 			height: 40px
 			line-height: 40px

@@ -24,35 +24,13 @@
 				</transition>
 			</div>
 		</div>
-		<transition name="fold">
-			<div class="shopcart-list" v-show="listShow">
-				<div class="list-header">
-					<h1 class="title">购物车</h1>
-					<span class="empty" @click="empty">清空</span>
-				</div>
-				<div class="list-content" ref="listContent">
-					<ul>
-						<li class="food border-1px" v-for="food in selectFoods">
-							<span class="name">{{food.name}}</span>
-							<div class="price">￥{{food.price*food.count}}</div>
-							<div class="cartcontrol-wrapper">
-								<cartcontrol :food="food" @add="addFood"></cartcontrol>
-							</div>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</transition>
-		<transition name="fade">
-			<div class="list-mask" v-show="listShow" @click="hideMask"></div>
-		</transition>
+		<foodscart :selectFoods="selectFoods" :fold="fold"></foodscart>
 	</div>
 </template>
 
 <!--suppress JSUnresolvedVariable -->
 <script type="text/ecmascript-6">
-	import BScroll from 'better-scroll'
-	import cartcontrol from 'components/cartcontrol/cartcontrol'
+	import foodscart from 'components/foodscart/foodscart'
 
 	export default {
 		data () {
@@ -75,7 +53,7 @@
 					}
 				],
 				dropBalls: [],
-				fold: true
+				fold: false
 			}
 		},
 		props: {
@@ -129,25 +107,6 @@
 				} else {
 					return 'enough'
 				}
-			},
-			listShow () {
-				if (!this.totalCount) {
-					this.fold = true;
-					return false
-				}
-				let show = !this.fold;
-				if (show) {
-					this.$nextTick(() => {
-						if (!this.listContent) {
-							this.listContent = new BScroll(this.$refs.listContent, {
-								click: true
-							});
-						} else {
-							this.listContent.refresh();
-						}
-					});
-				}
-				return show;
 			}
 		},
 		methods: {
@@ -199,24 +158,15 @@
 				}
 			},
 			toggleList () {
-				if (this.totalCount > 0) {
-					this.fold = !this.fold;
+				if (!this.totalCount) {
+					this.fold = false;
+					return;
 				}
-			},
-			addFood(target) {
-				this.drop(target)
-			},
-			empty () {
-				this.selectFoods.forEach((food) => {
-					food.count = 0;
-				})
-			},
-			hideMask () {
-				this.fold = true;
+				this.fold = !this.fold
 			}
 		},
 		components: {
-			cartcontrol
+			foodscart
 		}
 	}
 </script>
@@ -323,70 +273,4 @@
 					border-radius: 50%;
 					background: #00a0dc;
 					transition: all 0.4s linear
-	.shopcart-list
-		position: absolute
-		top: 0
-		left: 0
-		z-index: -1
-		width: 100%
-		transform: translate3d(0, -100%, 0)
-		&.fold-enter, &.fold-leave-active
-			transform: translate3d(0, 0, 0)
-		&.fold-enter-active, &.fold-leave-active
-			transition: all 0.5s
-		.list-header
-			height: 40px
-			line-height: 40px
-			padding: 0 18px
-			background: #f3f5f7
-			border-1px(rgba(7, 17, 27, 0.1))
-			.title
-				float: left
-				font-size: 14px
-				color: #07111b
-			.empty
-				float: right
-				font-size: 12px
-				color: #00a0dc
-		.list-content
-			padding: 0 18px
-			max-height: 217px
-			overflow: hidden
-			background: #fff
-			.food
-				position: relative
-				padding: 12px 0
-				box-sizing: border-box
-				border-1px(rgba(7, 17, 27, 0.1))
-				.name
-					line-height: 24px
-					font-size: 14px
-					color: #07111b
-				.price
-					position: absolute
-					right: 90px
-					bottom: 12px
-					line-height: 24px
-					font-size: 14px
-					font-weight: 700
-					color: #f01414
-				.cartcontrol-wrapper
-					position: absolute
-					right: 0
-					bottom: 6px
-	.list-mask
-		position: fixed
-		top: 0
-		left: 0
-		width: 100%
-		height: 100%
-		backdrop-filter:blur(10px)
-		background: rgba(7, 17, 27, 0.6)
-		z-index: -2
-		opacity: 1
-		transition: all 0.5s
-		&.fade-enter, &.fade-leave-active
-			opacity: 0
-		&.fade-enter-active, &.fade-leave-active
-			transition: all 0.5s
 </style>
