@@ -65,7 +65,7 @@
 				if (!event._constructed) {
 					return;
 				}
-//				console.log(event.target)
+				console.log(event.target)
 				this.$emit('add', event.target);
 				Vue.set(this.food, "count", 1)
 			},
