@@ -48,9 +48,14 @@
 			show () {
 				this.showFlag = true;
 				this.$nextTick(() => {
-					new BScroll(this.$refs.food, {
-						click: true
-					})
+					if (!this.foodScroll) {
+						this.foodScroll = new BScroll(this.$refs.food, {
+							click: true
+						})
+					} else {
+						this.foodScroll.refresh();
+					}
+
 				})
 			},
 			hide () {
@@ -60,8 +65,13 @@
 				if (!event._constructed) {
 					return;
 				}
-//				this.$emit("add", event.target);
+//				console.log(event.target)
+				this.$emit('add', event.target);
 				Vue.set(this.food, "count", 1)
+			},
+			addFood (target) {
+//				console.log(target)
+				this.$emit('add', target);
 			}
 		},
 		components: {
