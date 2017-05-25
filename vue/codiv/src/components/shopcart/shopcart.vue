@@ -204,7 +204,6 @@
 				}
 			},
 			addFood(target) {
-				console.log(target)
 				this.drop(target)
 			},
 			empty () {

@@ -18,8 +18,10 @@
 						<span class="now">￥{{food.price}}</span>
 						<span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
 					</div>
-					<div class="buy" @click.stop.prevent="cartFirst" v-show="food.count === 0 || !food.count">加入购物车
-					</div>
+					<transition name="fade">
+						<div class="buy" @click.stop.prevent="cartFirst" v-show="food.count === 0 || !food.count">加入购物车
+						</div>
+					</transition>
 					<div class="cartcontrol-wrapper">
 						<cartcontrol :food="food" @add="addFood"></cartcontrol>
 					</div>
@@ -65,12 +67,10 @@
 				if (!event._constructed) {
 					return;
 				}
-				console.log(event.target)
 				this.$emit('add', event.target);
 				Vue.set(this.food, "count", 1)
 			},
 			addFood (target) {
-//				console.log(target)
 				this.$emit('add', target);
 			}
 		},
@@ -158,6 +158,11 @@
 					font-size: 10px;
 					color: #fff;
 					background: #00a0dc;
+					opacity: 1;
+					&.fade-enter, &.fade-leave-active
+						opacity: 0;
+					&.fade-enter-active, &.fade-leave-active
+						transition: all 0.5s;
 				.cartcontrol-wrapper
 					position: absolute
 					right: 12px
